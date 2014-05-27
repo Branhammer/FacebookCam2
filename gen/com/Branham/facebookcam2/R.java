@@ -1289,9 +1289,9 @@ containing a value of this type.
         public static final int beginning=0x7f050013;
         public static final int button_capture=0x7f05003f;
         public static final int button_done=0x7f050040;
-        public static final int button_login=0x7f05005b;
-        public static final int button_saveLocal=0x7f05005c;
-        public static final int button_upload=0x7f05005f;
+        public static final int button_login=0x7f05005f;
+        public static final int button_saveLocal=0x7f050060;
+        public static final int button_upload=0x7f05005c;
         public static final int checkbox=0x7f05002f;
         public static final int collapseActionView=0x7f05000f;
         public static final int com_facebook_body_frame=0x7f050053;
@@ -1367,6 +1367,7 @@ containing a value of this type.
         public static final int top_action_bar=0x7f050022;
         public static final int up=0x7f050023;
         public static final int useLogo=0x7f050005;
+        public static final int view_gridframe=0x7f05005b;
         public static final int view_gridview=0x7f05005e;
         public static final int withText=0x7f05000e;
     }

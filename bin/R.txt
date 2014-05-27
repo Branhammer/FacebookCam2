@@ -329,9 +329,9 @@ int id always 0x7f05000d
 int id beginning 0x7f050013
 int id button_capture 0x7f05003f
 int id button_done 0x7f050040
-int id button_login 0x7f05005b
-int id button_saveLocal 0x7f05005c
-int id button_upload 0x7f05005f
+int id button_login 0x7f05005f
+int id button_saveLocal 0x7f050060
+int id button_upload 0x7f05005c
 int id checkbox 0x7f05002f
 int id collapseActionView 0x7f05000f
 int id com_facebook_body_frame 0x7f050053
@@ -407,6 +407,7 @@ int id title 0x7f05002d
 int id top_action_bar 0x7f050022
 int id up 0x7f050023
 int id useLogo 0x7f050005
+int id view_gridframe 0x7f05005b
 int id view_gridview 0x7f05005e
 int id withText 0x7f05000e
 int integer abc_max_action_buttons 0x7f0b0000
