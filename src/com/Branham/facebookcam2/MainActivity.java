@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
@@ -32,6 +33,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		final Intent done = new Intent(this, SelectActivity.class);
+		
 		mCamera = getCameraInstance();
 		mCamera.setDisplayOrientation(90);
 		mPreview = new PreviewFBC2(this, mCamera);
@@ -46,7 +49,20 @@ public class MainActivity extends Activity {
 					public void onClick(View v) {
 						mCamera.takePicture(null, null, mPicture);
 					}
-				});
+				}
+		);
+		
+		Button doneButton = (Button) findViewById(id.button_done);
+		doneButton.setOnClickListener(
+				new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						startActivity(done);
+					}
+				}
+		);
+		
 	}
 	
 	@Override
