@@ -1,24 +1,23 @@
 package com.Branham.facebookcam2;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
-import android.util.Log;
+import android.graphics.Point;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter{
 
 	private Context mContext;
 	ArrayList<String> itemList = new ArrayList<String>();
-	private Bitmap[] my_photos;
+	//private Bitmap[] my_photos;
 	
 	public ImageAdapter(Context c){
 		mContext = c;
@@ -52,16 +51,22 @@ public class ImageAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ImageView imageView;
+		WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
+		Display display = wm.getDefaultDisplay();
+		Point size = new Point();
+		display.getSize(size);
+		int width = size.x/3;
+		
 		if(convertView == null) {
 			imageView = new ImageView(mContext);
-			imageView.setLayoutParams(new GridView.LayoutParams(220,220));
+			//imageView.setLayoutParams(new GridView.LayoutParams(90,90));
 			imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 			imageView.setPadding(0,0,0,0);
 		}else{
 			imageView = (ImageView) convertView;
 		}
 		
-		Bitmap bm = decodeSampledBitmapFromUri(itemList.get(position),220,220);
+		Bitmap bm = decodeSampledBitmapFromUri(itemList.get(position),width,width);
 		
 		imageView.setImageBitmap(bm);
 		return imageView;

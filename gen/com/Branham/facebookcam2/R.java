@@ -1286,11 +1286,11 @@ containing a value of this type.
         public static final int action_mode_close_button=0x7f050026;
         public static final int activity_chooser_view_content=0x7f050027;
         public static final int always=0x7f05000d;
+        public static final int authButton=0x7f050060;
         public static final int beginning=0x7f050013;
         public static final int button_capture=0x7f05003f;
         public static final int button_done=0x7f050040;
-        public static final int button_login=0x7f05005f;
-        public static final int button_saveLocal=0x7f050060;
+        public static final int button_saveLocal=0x7f050061;
         public static final int button_upload=0x7f05005c;
         public static final int checkbox=0x7f05002f;
         public static final int collapseActionView=0x7f05000f;
@@ -1369,6 +1369,7 @@ containing a value of this type.
         public static final int useLogo=0x7f050005;
         public static final int view_gridframe=0x7f05005b;
         public static final int view_gridview=0x7f05005e;
+        public static final int view_loginframe=0x7f05005f;
         public static final int withText=0x7f05000e;
     }
     public static final class integer {
@@ -1481,6 +1482,7 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f080025;
+        public static final int app_id=0x7f080029;
         public static final int app_name=0x7f080027;
         public static final int com_facebook_choose_friends=0x7f08000f;
         public static final int com_facebook_dialogloginactivity_ok_button=0x7f080000;

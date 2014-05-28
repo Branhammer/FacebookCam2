@@ -24,13 +24,21 @@
 
     </LinearLayout>
     
-    <Button 
-        android:id="@+id/button_login"
-        android:text="Login"
+    <LinearLayout
+        android:id="@+id/view_loginframe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_marginTop="15dp">
+        
+        <com.facebook.widget.LoginButton 
+	        android:id="@+id/authButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"/>
+        
+    </LinearLayout>
+    
     
     <Button 
         android:id="@+id/button_saveLocal"
@@ -38,7 +46,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/button_login"/>
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/view_loginframe"/>
     
     <Spinner 
         android:id="@+id/spinner_album"
