@@ -1,14 +1,12 @@
 package com.Branham.facebookcam2;
 
-import java.io.File;
+import java.io.File;	
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -57,9 +55,9 @@ public class SelectActivity extends Activity{
 		};
 		private UiLifecycleHelper uiHelper;
 		private Spinner albums;
-		private List<String> albumNames;
+		private ArrayList<Album> albumList;
+		private ArrayList<String> albumNames;
 		private ArrayAdapter adapter;
-		private Facebook mfacebook;
 		private File[] files;
 		private Bitmap[] uploadPics;
 	
@@ -131,26 +129,55 @@ public class SelectActivity extends Activity{
 								for(int i=0; i < uploadPics.length; i++){
 									Bundle params = new Bundle();
 									params.putParcelable("source", uploadPics[i]);
-									new Request(
-											Session.getActiveSession(),
-											"/" + albums.getSelectedItem().toString() + "/photos",
-											params,
-											HttpMethod.POST,
-											new Request.Callback() {
-												
-												@Override
-												public void onCompleted(Response response) {
-													Log.d("Upload", "Upload for a file Completed");
-												}
-											}).executeAsync();
+									params.putString("message", "");				// For a description WORKS... maybe add a text box
+									params.putBoolean("no_story", true);
+									Log.d("Upload", params.toString());
+									Request upload = makeUploadRequest(params);
+									upload.executeAsync();
+									
+									/*Log.d("Upload", test.toString());
+									Log.d("Upload", test.getGraphPath());
+									Log.d("Upload", test.getRestMethod());
+									Log.d("Upload", test.getParameters().toString());*/
+									
 								}
 							}
-							
-							// Delete photos from phone
 							
 						}
 					}
 			);
+		}
+		
+		public Request makeUploadRequest(Bundle params){
+			return new Request(
+					Session.getActiveSession(),
+					getUploadPath(),
+					params,
+					HttpMethod.POST,
+					new Request.Callback() {
+						
+						@Override
+						public void onCompleted(Response response) {
+							Log.d("Upload", response.toString());
+							Log.d("Upload", "Upload for a file Completed");
+							
+							// Delete photos from phone
+							delLocalPics();
+							
+						}
+					});
+		}
+		
+		public void delLocalPics(){
+			
+			for(int i=0; i<files.length; i++){
+				if(files[i].delete()){
+					Log.d("Delete", "Success");
+				}else{
+					Log.d("Delete", "Problems");
+				}
+			}
+			
 		}
 		
 		public void getPicBitmaps(){
@@ -159,6 +186,16 @@ public class SelectActivity extends Activity{
 				uploadPics[i] = BitmapFactory.decodeFile(files[i].getPath());
 				Log.d("Bitmap", uploadPics[i].toString());
 			}
+		}
+		
+		public String getUploadPath(){
+			String path = "";
+			for(int i = 0; i < albumList.size(); i++){
+				if(albums.getSelectedItem().toString().equalsIgnoreCase(albumList.get(i).getName())){
+					path = ("/" + albumList.get(i).getId() + "/photos").replaceAll(" ", "%20");
+				}
+			}
+			return path;
 		}
 		
 		public Session.NewPermissionsRequest askPermissions(){
@@ -188,11 +225,16 @@ public class SelectActivity extends Activity{
 						try{
 							JSONObject json = new JSONObject(response.getRawResponse());
 							JSONArray jarray = json.getJSONArray("data");
+							albumList = new ArrayList<Album>();
 							albumNames = new ArrayList<String>();
+							Log.d("JSON", "Starting JSON loop");
 							for(int i = 0; i < jarray.length(); i++){
 								JSONObject oneAlbum = jarray.getJSONObject(i);
 								if(oneAlbum.getBoolean("can_upload")==true){
-									albumNames.add(oneAlbum.getString("name"));
+									String name = oneAlbum.getString("name");
+									albumNames.add(name);
+									Album newAlbum = new Album(name, oneAlbum.getString("id"));
+									albumList.add(newAlbum);
 								}
 							}
 							

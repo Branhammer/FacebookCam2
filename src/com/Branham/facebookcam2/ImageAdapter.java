@@ -17,7 +17,6 @@ public class ImageAdapter extends BaseAdapter{
 
 	private Context mContext;
 	ArrayList<String> itemList = new ArrayList<String>();
-	//private Bitmap[] my_photos;
 	
 	public ImageAdapter(Context c){
 		mContext = c;
@@ -29,12 +28,6 @@ public class ImageAdapter extends BaseAdapter{
 	
 	@Override
 	public int getCount() {
-		/*try{
-		getImages();
-		return my_photos.length;
-		}catch(NullPointerException e){
-			return 0;
-		}*/
 		return itemList.size();
 	}
 
@@ -59,7 +52,6 @@ public class ImageAdapter extends BaseAdapter{
 		
 		if(convertView == null) {
 			imageView = new ImageView(mContext);
-			//imageView.setLayoutParams(new GridView.LayoutParams(90,90));
 			imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 			imageView.setPadding(0,0,0,0);
 		}else{
@@ -101,22 +93,5 @@ public class ImageAdapter extends BaseAdapter{
 		
 		return inSampleSize;
 	}
-	/*private void getImages(){
-		String path = Environment.getExternalStorageDirectory().getPath() + "/pictures/facebookcam2";
-		Log.d("here", path);
-		File directory = new File(path);
-		
-		try{
-		File[] stored = directory.listFiles();
-		my_photos = new Bitmap[stored.length];
-		
-		for (int i=0; i<stored.length; i++){
-			File imgFile = new File(stored[i].toString());
-			my_photos[i] = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-		}
-		}catch(NullPointerException e){
-			
-		}
-	}*/
 	
 }
