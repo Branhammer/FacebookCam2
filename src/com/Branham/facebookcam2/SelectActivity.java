@@ -1,31 +1,35 @@
 package com.Branham.facebookcam2;
 
-import java.io.File;	
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Spinner;
+
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.android.Facebook;
 import com.facebook.widget.LoginButton;
 
 /**
@@ -42,32 +46,36 @@ import com.facebook.widget.LoginButton;
  * 
  */
 
-
 public class SelectActivity extends Activity{
 
+		private UiLifecycleHelper uiHelper;
+		private Spinner albums;
+		private ArrayList<Album> albumList;
+		private ArrayList<String> albumNames;
+		private ArrayAdapter<String> adapter;
+		private File[] files;
+		private String ExternalStorageDirectoryPath;
+		private String AppStoragePath;
+		private ProgressDialog uploading;
 		private Session.StatusCallback callback = new Session.StatusCallback() {
-			
 			@Override
 			public void call(Session session, SessionState state, Exception exception) {
 				// TODO Auto-generated method stub
 				
 			}
 		};
-		private UiLifecycleHelper uiHelper;
-		private Spinner albums;
-		private ArrayList<Album> albumList;
-		private ArrayList<String> albumNames;
-		private ArrayAdapter adapter;
-		private File[] files;
-		private Bitmap[] uploadPics;
-		private String ExternalStorageDirectoryPath;
 	
-	
+		
 		@Override
 		protected void onCreate(Bundle savedInstanceState){
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.select_activity);
 			getActionBar().setDisplayHomeAsUpEnabled(true);
+			uploading = new ProgressDialog(this);
+			uploading.setMessage("Uploading...");
+			uploading.setProgressStyle(1);
+			uploading.setCancelable(false);
+			uploading.setCanceledOnTouchOutside(false);
 			
 			// Get permission to read album titles
 			LoginButton authButton = (LoginButton) findViewById(R.id.authButton);
@@ -79,37 +87,16 @@ public class SelectActivity extends Activity{
 			
 			/*The Pictures*/
 			
-			GridView pictureGrid = (GridView) findViewById(R.id.view_gridview);
-			ImageAdapter myImageAdapter = new ImageAdapter(this);
-			pictureGrid.setAdapter(myImageAdapter);
-		
-			ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
-			String path = ExternalStorageDirectoryPath + "/FacebookCam2";
-			File targetDir = new File(path);
-			
-			/*	Code used to see if the path worked
-			Log.d("Files",Environment.getExternalStorageState());
-			Log.d("Files",targetDir.exists()+"");
-			Log.d("Files",targetDir.isDirectory()+"");
-			Log.d("Files",targetDir.listFiles()+"");
-			*/
-			
-			files = targetDir.listFiles();
-			for(int i=0; i<files.length; i++){
-				File file = files[i];
-				myImageAdapter.add(file.getAbsolutePath());
-			}
+			updatePicsView();
 			
 			/*The Login*/
+			// The login button is handled by the facebook api
+			// Check out onSessionStateChange()
 			
 			albums = (Spinner)findViewById(R.id.spinner_album);
 			albums.setVisibility(View.GONE);						// Hide spinner while not logged in
 			
-			/**Save Locally
-			 * 
-			 * If you want to keep the pictures on the device, save locally before uploading
-			 * 
-			 * */
+			/*Save Locally*/
 			
 			Button saveLoc = (Button) findViewById(R.id.button_saveLocal);
 			saveLoc.setOnClickListener(
@@ -140,43 +127,34 @@ public class SelectActivity extends Activity{
 							}
 							
 							// Upload photos
-							getPicBitmaps();
-							if(uploadPics.length > 0){
-								for(int i=0; i < uploadPics.length; i++){
-									Bundle params = new Bundle();
-									params.putParcelable("source", uploadPics[i]);
-									params.putString("message", "");				// For a description WORKS... maybe add a text box
-									params.putBoolean("no_story", true);
-									Log.d("Upload", params.toString());
-									Request upload = makeUploadRequest(params);
-									upload.executeAsync();
-									
-									/*Log.d("Upload", test.toString());
-									Log.d("Upload", test.getGraphPath());
-									Log.d("Upload", test.getRestMethod());
-									Log.d("Upload", test.getParameters().toString());*/
-									
-								}
-							}
-							
+							uploading.setMax(files.length);
+							uploading.show();
+							uploadExecute();
 						}
 					}
 			);
 		}
 		
-		public void moveFiles(){
-			for(int i=0 ; i < files.length; i++){
-				File file = files[i];
-				if(file.renameTo(new File(Environment.getExternalStorageDirectory().getPath() + "/DCIM/" + File.separator +
-				        "IMG_"+ i + ".jpg"))){
-					Log.d("move files", "This pic should have moved");
-				}else{
-					Log.d("move files", "This pic failed to move");
-				}
+		public void uploadExecute(){
+			File tempDir = new File(AppStoragePath);
+			if(tempDir.listFiles().length > 0){
+				File[] tempArray = tempDir.listFiles();
+				String firstPath = tempArray[0].getAbsolutePath();
+				Bitmap pic = BitmapFactory.decodeFile(firstPath);
+				Log.d("Path", firstPath);
+				Log.d("Bitmap", pic.toString());
+				Bundle params = new Bundle();
+				params.putParcelable("source", pic);
+				params.putString("message", "");				// For a description WORKS... maybe add a text box for user input
+				params.putBoolean("no_story", true);			// Publish to wall?
+				Request upload = makeUploadRequest(params, firstPath);
+				upload.executeAsync();
+			}else{
+				uploading.dismiss();
 			}
 		}
 		
-		public Request makeUploadRequest(Bundle params){
+		public Request makeUploadRequest(Bundle params, final String delPath){
 			return new Request(
 					Session.getActiveSession(),
 					getUploadPath(),
@@ -186,34 +164,56 @@ public class SelectActivity extends Activity{
 						
 						@Override
 						public void onCompleted(Response response) {
-							Log.d("Upload", response.toString());
+							// Log.d("Upload", response.toString());
 							Log.d("Upload", "Upload for a file Completed");
 							
-							// Delete photos from phone
-							delLocalPics();
-							
+							// Delete photo from phone
+							delAppPic(delPath);
+							uploading.incrementProgressBy(1);
+							uploadExecute();
 						}
 					});
 		}
 		
-		public void delLocalPics(){
-			
-			for(int i=0; i<files.length; i++){
-				if(files[i].delete()){
-					Log.d("Delete", "Success");
-				}else{
-					Log.d("Delete", "Problems");
-				}
+		public boolean delAppPic(String path){
+			if(new File(path).delete()){
+				Log.d("Delete", "Success");
+				updatePicsView();
+				return true;
+			}else{
+				Log.d("Delete", "Problems");
+				return false;
 			}
-			
 		}
 		
-		public void getPicBitmaps(){
-			uploadPics = new Bitmap[files.length];
-			for(int i = 0; i < files.length; i++){
-				uploadPics[i] = BitmapFactory.decodeFile(files[i].getPath());
-				Log.d("Bitmap", uploadPics[i].toString());
+		public void updatePicsView(){
+			GridView pictureGrid = (GridView) findViewById(R.id.view_gridview);
+			ImageAdapter myImageAdapter = new ImageAdapter(this);
+			pictureGrid.setAdapter(myImageAdapter);
+			
+			ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+			AppStoragePath = ExternalStorageDirectoryPath + "/FacebookCam2";
+			File targetDir = new File(AppStoragePath);
+			files = targetDir.listFiles();
+			
+			for(int i=0; i<files.length; i++){
+				File file = files[i];
+				myImageAdapter.add(file.getAbsolutePath());
 			}
+		}
+		
+		public void moveFiles(){
+			for(int i=0 ; i < files.length; i++){
+				File file = files[i];
+				String path = Environment.getExternalStorageDirectory().getPath() + "/DCIM" + file.getAbsolutePath().replace(AppStoragePath, "");
+				Log.d("move files", "Path: " + path);
+				if(file.renameTo(new File(path))){
+					Log.d("move files", "This pic should have moved");
+				}else{
+					Log.d("move files", "This pic failed to move");
+				}
+			}
+			updatePicsView();
 		}
 		
 		public String getUploadPath(){
@@ -273,8 +273,8 @@ public class SelectActivity extends Activity{
 			}
 		}
 		
-		// Add Array to arrayAdapter and set the spinner visible
 		public void updateSpinner(){
+			// Adds Array to arrayAdapter and sets the spinner visible
 			adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, albumNames);
 			albums.setAdapter(adapter);
 			albums.setVisibility(View.VISIBLE);
@@ -310,5 +310,14 @@ public class SelectActivity extends Activity{
 			uiHelper.onSaveInstanceState(outState);
 		}
 		
-	
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item){
+			switch(item.getItemId()){
+			case android.R.id.home:
+				NavUtils.navigateUpFromSameTask(this);
+				return true;
+			}
+			return super.onOptionsItemSelected(item);
+		}
+		
 }
