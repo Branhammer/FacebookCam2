@@ -60,6 +60,7 @@ public class SelectActivity extends Activity{
 		private ArrayAdapter adapter;
 		private File[] files;
 		private Bitmap[] uploadPics;
+		private String ExternalStorageDirectoryPath;
 	
 	
 		@Override
@@ -82,7 +83,7 @@ public class SelectActivity extends Activity{
 			ImageAdapter myImageAdapter = new ImageAdapter(this);
 			pictureGrid.setAdapter(myImageAdapter);
 		
-			String ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
+			ExternalStorageDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getPath();
 			String path = ExternalStorageDirectoryPath + "/FacebookCam2";
 			File targetDir = new File(path);
 			
@@ -104,6 +105,21 @@ public class SelectActivity extends Activity{
 			albums = (Spinner)findViewById(R.id.spinner_album);
 			albums.setVisibility(View.GONE);						// Hide spinner while not logged in
 			
+			/**Save Locally
+			 * 
+			 * If you want to keep the pictures on the device, save locally before uploading
+			 * 
+			 * */
+			
+			Button saveLoc = (Button) findViewById(R.id.button_saveLocal);
+			saveLoc.setOnClickListener(
+					new View.OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							moveFiles();
+						}
+					});
 			
 			/*The Upload*/
 			
@@ -146,6 +162,18 @@ public class SelectActivity extends Activity{
 						}
 					}
 			);
+		}
+		
+		public void moveFiles(){
+			for(int i=0 ; i < files.length; i++){
+				File file = files[i];
+				if(file.renameTo(new File(Environment.getExternalStorageDirectory().getPath() + "/DCIM/" + File.separator +
+				        "IMG_"+ i + ".jpg"))){
+					Log.d("move files", "This pic should have moved");
+				}else{
+					Log.d("move files", "This pic failed to move");
+				}
+			}
 		}
 		
 		public Request makeUploadRequest(Bundle params){
@@ -211,13 +239,9 @@ public class SelectActivity extends Activity{
 		
 		private void onSessionStateChange (Session session, SessionState state, Exception exception){
 			if (state.isClosed()){
-				Log.d("Session", "Logged out...");
+				
 			}
 			if(state.isOpened()){  
-				Log.d("Session", "Logged in...");
-				
-				Log.d("Session", "Access token: " + session.getAccessToken());
-		
 				new Request(session, "/me/albums", null, HttpMethod.GET, new Request.Callback() {
 					
 					@Override

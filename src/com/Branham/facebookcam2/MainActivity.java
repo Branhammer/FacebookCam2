@@ -26,19 +26,20 @@ public class MainActivity extends Activity {
 	private static Camera mCamera;
 	private PreviewFBC2 mPreview;
 	private static int MEDIA_TYPE_IMAGE = 1;
-	public static String TAG = "MainActivity";
+	private static String TAG = "MainActivity";
+	private Intent done;
+	private FrameLayout preview;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		final Intent done = new Intent(this, SelectActivity.class);
-		
+		done = new Intent(this, SelectActivity.class);
 		mCamera = getCameraInstance();
 		mCamera.setDisplayOrientation(90);
 		mPreview = new PreviewFBC2(this, mCamera);
-		final FrameLayout preview = (FrameLayout) findViewById(R.id.previewFBC2);
+		preview = (FrameLayout) findViewById(R.id.previewFBC2);
 		preview.addView(mPreview);
 		
 		Button captureButton = (Button) findViewById(id.button_capture);
