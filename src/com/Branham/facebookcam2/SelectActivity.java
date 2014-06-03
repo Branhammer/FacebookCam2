@@ -13,6 +13,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NavUtils;
@@ -200,6 +201,14 @@ public class SelectActivity extends Activity{
 				File file = files[i];
 				myImageAdapter.add(file.getAbsolutePath());
 			}
+		}
+		
+		public String rotatePic(String path){
+			Bitmap pic = BitmapFactory.decodeFile(path);
+			Matrix matrix = new Matrix();
+			matrix.postRotate(90);
+			pic = Bitmap.createBitmap(pic,0,0,pic.getWidth(),pic.getHeight(),matrix,true);
+			return path;
 		}
 		
 		public void moveFiles(){

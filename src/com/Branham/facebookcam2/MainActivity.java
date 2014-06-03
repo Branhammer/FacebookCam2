@@ -20,8 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
-import com.Branham.facebookcam2.R.id;
-
 public class MainActivity extends Activity {
 
 	private static Camera mCamera;
@@ -43,7 +41,7 @@ public class MainActivity extends Activity {
 		preview = (FrameLayout) findViewById(R.id.previewFBC2);
 		preview.addView(mPreview);
 		
-		Button captureButton = (Button) findViewById(id.button_capture);
+		Button captureButton = (Button) findViewById(R.id.button_capture);
 		captureButton.setOnClickListener(
 				new View.OnClickListener() {
 					
@@ -54,7 +52,7 @@ public class MainActivity extends Activity {
 				}
 		);
 		
-		Button doneButton = (Button) findViewById(id.button_done);
+		Button doneButton = (Button) findViewById(R.id.button_done);
 		doneButton.setOnClickListener(
 				new View.OnClickListener() {
 					
