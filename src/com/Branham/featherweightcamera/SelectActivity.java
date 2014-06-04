@@ -25,7 +25,6 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Spinner;
 
-import com.Branham.facebookcam2.R;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
@@ -72,7 +71,7 @@ public class SelectActivity extends Activity{
 		protected void onCreate(Bundle savedInstanceState){
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.select_activity);
-			getActionBar().setDisplayHomeAsUpEnabled(true);
+			//getActionBar().setDisplayHomeAsUpEnabled(true);
 			uploading = new ProgressDialog(this);
 			uploading.setMessage("Uploading...");
 			uploading.setProgressStyle(1);
