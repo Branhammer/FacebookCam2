@@ -18,8 +18,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
@@ -70,6 +73,8 @@ public class SelectActivity extends Activity{
 		@Override
 		protected void onCreate(Bundle savedInstanceState){
 			super.onCreate(savedInstanceState);
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+	        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			setContentView(R.layout.select_activity);
 			//getActionBar().setDisplayHomeAsUpEnabled(true);
 			uploading = new ProgressDialog(this);
@@ -134,6 +139,25 @@ public class SelectActivity extends Activity{
 						}
 					}
 			);
+		}
+		
+		@Override
+		public boolean onKeyDown(int keyCode, KeyEvent event)  {
+		    
+			switch(keyCode){
+				case KeyEvent.KEYCODE_BACK:
+					Log.d("Buttons", "Back button pushed");
+					NavUtils.navigateUpFromSameTask(this);
+					return true;
+				/*case KeyEvent.KEYCODE_HOME:
+					Log.d("Buttons", "Home button pushed");
+					Intent intent = new Intent(Intent.ACTION_MAIN);
+					intent.addCategory(Intent.CATEGORY_HOME);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(intent);*/
+			}
+
+		    return super.onKeyDown(keyCode, event);
 		}
 		
 		public void uploadExecute(){
