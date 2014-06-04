@@ -1,4 +1,4 @@
-package com.Branham.facebookcam2;
+package com.Branham.featherweightcamera;
 
 public class Album {
 

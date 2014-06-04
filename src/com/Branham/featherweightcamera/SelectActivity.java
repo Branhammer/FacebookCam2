@@ -1,4 +1,4 @@
-package com.Branham.facebookcam2;
+package com.Branham.featherweightcamera;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Spinner;
 
+import com.Branham.facebookcam2.R;
 import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;

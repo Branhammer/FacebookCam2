@@ -1,4 +1,4 @@
-package com.Branham.facebookcam2;
+package com.Branham.featherweightcamera;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import com.Branham.facebookcam2.R;
 
 import android.app.Activity;
 import android.content.Intent;
