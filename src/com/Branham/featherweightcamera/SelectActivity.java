@@ -13,7 +13,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.NavUtils;
@@ -24,9 +23,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.facebook.HttpMethod;
 import com.facebook.Request;
@@ -54,6 +54,7 @@ public class SelectActivity extends Activity{
 
 		private UiLifecycleHelper uiHelper;
 		private Spinner albums;
+		private TextView select;
 		private ArrayList<Album> albumList;
 		private ArrayList<String> albumNames;
 		private ArrayAdapter<String> adapter;
@@ -101,10 +102,13 @@ public class SelectActivity extends Activity{
 			
 			albums = (Spinner)findViewById(R.id.spinner_album);
 			albums.setVisibility(View.GONE);						// Hide spinner while not logged in
+			select = (TextView)findViewById(R.id.text_select);
+			select.setVisibility(View.GONE);
+			
 			
 			/*Save Locally*/
 			
-			Button saveLoc = (Button) findViewById(R.id.button_saveLocal);
+			ImageButton saveLoc = (ImageButton) findViewById(R.id.button_saveLocal);
 			saveLoc.setOnClickListener(
 					new View.OnClickListener() {
 						
@@ -116,7 +120,7 @@ public class SelectActivity extends Activity{
 			
 			/*The Upload*/
 			
-			Button upload = (Button) findViewById(R.id.button_upload);
+			ImageButton upload = (ImageButton) findViewById(R.id.button_upload);
 			upload.setOnClickListener(
 					new View.OnClickListener() {
 						
@@ -227,14 +231,6 @@ public class SelectActivity extends Activity{
 			}
 		}
 		
-		public String rotatePic(String path){
-			Bitmap pic = BitmapFactory.decodeFile(path);
-			Matrix matrix = new Matrix();
-			matrix.postRotate(90);
-			pic = Bitmap.createBitmap(pic,0,0,pic.getWidth(),pic.getHeight(),matrix,true);
-			return path;
-		}
-		
 		public void moveFiles(){
 			for(int i=0 ; i < files.length; i++){
 				File file = files[i];
@@ -311,6 +307,7 @@ public class SelectActivity extends Activity{
 			adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, albumNames);
 			albums.setAdapter(adapter);
 			albums.setVisibility(View.VISIBLE);
+			select.setVisibility(View.VISIBLE);
 		}
 		
 		@Override

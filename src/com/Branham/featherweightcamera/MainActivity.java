@@ -10,17 +10,19 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 public class MainActivity extends Activity {
 
@@ -45,7 +47,7 @@ public class MainActivity extends Activity {
 		preview = (FrameLayout) findViewById(R.id.previewFBC2);
 		preview.addView(mPreview);
 		
-		Button captureButton = (Button) findViewById(R.id.button_capture);
+		ImageButton captureButton = (ImageButton) findViewById(R.id.button_capture);
 		captureButton.setOnClickListener(
 				new View.OnClickListener() {
 					
@@ -56,7 +58,7 @@ public class MainActivity extends Activity {
 				}
 		);
 		
-		Button doneButton = (Button) findViewById(R.id.button_done);
+		ImageButton doneButton = (ImageButton) findViewById(R.id.button_done);
 		doneButton.setOnClickListener(
 				new View.OnClickListener() {
 					
@@ -115,6 +117,11 @@ public class MainActivity extends Activity {
 			} catch (IOException e){
 				Log.d(TAG, "Error accessing file: " + e.getMessage());
 			}
+			if(rotatePic(pictureFile)){
+				Log.d("Rotate", "Should have rotated");
+			}else{
+				Log.d("Rotate", "Failed rotate");
+			}
 		}
 	};
 	
@@ -151,5 +158,25 @@ public class MainActivity extends Activity {
 	    }
 	    mCamera.startPreview();
 	    return mediaFile;
+	}
+	
+	public boolean rotatePic(File file){
+		String filePath = file.getAbsolutePath();
+		Bitmap pic = BitmapFactory.decodeFile(filePath);
+		Matrix matrix = new Matrix();
+		matrix.postRotate(90);
+		pic = Bitmap.createBitmap(pic,0,0,pic.getWidth(),pic.getHeight(),matrix,true);
+		file = new File(filePath);
+	    FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(file);
+			pic.compress(Bitmap.CompressFormat.PNG, 90, fos);
+		    fos.close();  
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		return true;
 	}
 }
