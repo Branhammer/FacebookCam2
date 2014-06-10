@@ -12,21 +12,23 @@
       
     <ImageButton
         android:id="@+id/button_capture"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="10dp"
         android:scaleType="fitCenter"
         android:background="@null"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/capture_icon_2" />
+        android:src="@drawable/capture_iconx" />
     
     <ImageButton 
         android:id="@+id/button_done"
-    	android:src="@drawable/done_button"
+    	android:src="@drawable/done_buttonx"
     	android:scaleType="fitCenter"
         android:background="@null"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:padding="10dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"/>
         
